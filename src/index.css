@@ -1,65 +1,139 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Bebas+Neue&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap");
 
 @import "tailwindcss";
 
-
 @theme {
   --font-dm-sans: "DM Sans", sans-serif;
-  --font-bebas-neue: "Bebas Neue", sans-serif;
+
+  --color-light-100: #cecefb;
+  --color-light-200: #a8b5db;
+
+  --color-gray-100: #9ca4ab;
+
+  --color-dark-100: #0f0d23;
+  --color-primary: #030014;
+
+  --breakpoint-xs: 480px;
+
+  --background-image-hero-pattern: url("../public/hero-bg.png");
 }
 
+@layer base {
+  body {
+    font-family: var(--font-dm-sans);
+    background: var(--color-primary);
+  }
 
-/* Custom utility classes */
+  h1 {
+    @apply mx-auto max-w-4xl text-center text-5xl font-bold leading-tight tracking-tight text-white sm:text-[64px] sm:leading-[76px];
+  }
 
-@utility text-gradient {
-  background: linear-gradient(
-    to right,
-    #f5c518,
-    #ff7a18
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  h2 {
+    @apply text-2xl font-bold text-white sm:text-3xl;
+  }
+
+  main {
+    @apply min-h-screen relative bg-primary;
+  }
+
+  header {
+    @apply mt-5 sm:mt-10;
+  }
+
+  header img {
+    @apply mx-auto h-auto w-full max-w-lg object-contain drop-shadow-md;
+  }
 }
 
+@layer components {
+  .pattern {
+    @apply absolute z-0 h-screen w-full bg-hero-pattern bg-cover bg-center;
+  }
 
-@utility fancy-text {
-  font-family: var(--font-bebas-neue);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  .wrapper {
+    @apply relative z-10 mx-auto flex max-w-7xl flex-col px-5 py-12 xs:p-10;
+  }
+
+  .search {
+    @apply mx-auto mt-10 w-full max-w-3xl rounded-lg bg-light-100/5 px-4 py-3;
+  }
+
+  .search div {
+    @apply relative flex items-center;
+  }
+
+  .search img {
+    @apply absolute left-2 h-5 w-5;
+  }
+
+  .search input {
+    @apply w-full bg-transparent py-2 pl-10 text-base text-gray-200 outline-none placeholder-light-200 sm:pr-10;
+  }
+
+  .all-movies {
+    @apply space-y-9;
+  }
+
+  .all-movies ul {
+    @apply grid grid-cols-1 gap-5 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4;
+  }
+
+  .movie-card {
+    @apply rounded-2xl bg-dark-100 p-5 shadow-inner shadow-light-100/10;
+  }
+
+  .movie-card img {
+    @apply h-auto w-full rounded-lg;
+  }
+
+  .movie-card h3 {
+    @apply line-clamp-1 text-base font-bold text-white;
+  }
+
+  .movie-card .content {
+    @apply mt-2 flex flex-row flex-wrap items-center gap-2;
+  }
+
+  .movie-card .rating {
+    @apply flex flex-row items-center gap-1;
+  }
+
+  .movie-card .rating img {
+    @apply size-4 object-contain;
+  }
+
+  .movie-card .rating p {
+    @apply text-base font-bold text-white;
+  }
+
+  .movie-card .content span {
+    @apply text-sm text-gray-100;
+  }
+
+  .movie-card .content .lang,
+  .movie-card .content .year {
+    @apply text-base font-medium capitalize text-gray-100;
+  }
 }
 
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-[#D6C7FF] to-[#AB8BFF] bg-clip-text text-transparent;
+  }
 
-@utility hide-scrollbar {
-  scrollbar-width: none;
+  .fancy-text {
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 190px;
+    -webkit-text-stroke: 5px rgba(206, 206, 251, 0.5);
+  }
 
-  &::-webkit-scrollbar {
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
     display: none;
   }
-}
-
-
-@utility movie-card {
-  background-color: #111827;
-  border-radius: 1rem;
-  padding: 1rem;
-  transition: transform 0.3s ease;
-
-  &:hover {
-    transform: translateY(-5px);
-  }
-}
-
-
-@utility flex-center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-
-@utility glass-effect {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
 }

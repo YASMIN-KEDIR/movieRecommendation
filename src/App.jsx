@@ -1,17 +1,143 @@
 import { useEffect, useState} from 'react'
 import Search from './component/Search'
+import Spinner from './component/Spinner'
+import MOvieCard from './component/MovieCard'
+import { getTrendingMovies, updateSearchCount } from "./appwrite.js";
+//import { useDebounce } from "react-use";
+
+const API_BASE_URL='https://api.themoviedb.org/3'
+const API_KEY=import.meta.env.VITE_TMDB_API_KEY;
+
+const API_OPTIONS ={
+  method: 'GET',
+  headers:{
+    accept: 'application/json',
+    Authorization: `Bearer ${API_KEY}`
+  }
+}
+
 
 const App = () => {
-  const [searchTerm, setSearchTerm] =useState(' ');
+  const [searchTerm, setSearchTerm] =useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [movieList,setMovieList] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
+  const [isLoading, setIsLoading] = useState(false);
+  //useDEbounce(() => setDebouncedSearchTerm(searchTerm),500,[searchTerm]);
+
+  const fetchMovies = async (query) => {
+    setIsLoading(true);
+    setErrorMessage('');
+    
+    try{
+const endPoint = query
+?`${API_BASE_URL}/search/movie?query=${encodeURIComponent(query)}`
+:`${API_BASE_URL}/discover/movie?sort_by=popularity.desc`;
+
+const response = await fetch(endPoint, API_OPTIONS);
+   if(!response.ok){throw new Error('Failed to fetch movies');
+   }
+
+    const data = await response.json();
+if(data.Response === 'False'){
+ setErrorMessage(data.Error || 'Failed to fetch movies');
+ setMOvieList([]);
+ return;
+}
+setMovieList(data.results || []);
+
+ if (query && data.results.length > 0) {
+        await updateSearchCount(query, data.results[0]);
+      }
+
+ } catch(error){
+      console.error('Error fetching movies:', {error});
+      setErrorMessage('Failed to fetch movies. Please try again later.');
+    }
+    finally{
+      setIsLoading(false);
+    }
+
+}
+
+
+ /* const loadTrendingMovies = async () => {
+    try {
+      const movies = await getTrendingMovies();
+      setTrendingMovies(movies);
+    } catch (error) {
+      console.error("Error fetching trending movies:", error.message);
+    }
+  };
+
+  const handleMovieClick = (movie) => {
+    setSelectedMovie(movie);
+    setIsModalOpen(true);
+    document.body.style.overflow = "hidden";
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedMovie(null);
+    document.body.style.overflow = "auto";
+  };*/
+
+useEffect(() => {
+  fetchMovies (debouncedSearchTerm);
+}, [debouncedSearchTerm]);
+
+/*useEffect(() => {
+    loadTrendingMovies();
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, []);*/
+
   return (
     <main>
       <div className="pattern"/>
       <div className="wrapper"> 
  <header>
-  <img src="./hero-img.png" alt="Hero-banner" />
-  <h1  className=" flex items-center justify-center">Find <span className="text-gradient"> movies</span> you'll Enjoy Without The Hassel</h1>
+  <img src="./hero.png" alt="Hero-banner" />
+  <h1  className=" text-4xl font-bold text-white">Find <span className="text-gradient"> movies</span> you'll Enjoy Without The Hassel</h1>
+   <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
  </header>
-  <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+
+     /*/{trendingMovies.length > 0 && (
+          <section className="trending">
+            <h2 className=" text-white">Trendings</h2>
+            <ul>
+              {trendingMovies.map((movie, index) => (
+                <li key={movie.$id}>
+                  <p>{index + 1}</p>
+                  <img 
+                    src={movie.poster_url} 
+                    alt={movie.title} 
+                    onClick={() => handleMovieClick(movie)}
+                  />
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+ <section className="all-movies">
+ <h2 className="mt-[40px]">All Movies</h2>
+  
+  {isLoading ? (
+  <Spinner/>
+ ) : errorMessage ?(
+  <p className="text-red-5000">{errorMessage}</p>
+ ) : (
+  <ul>
+    {movieList.map((movie) => (
+     <MOvieCard key={movie.id} movie={movie} />
+    ))}
+  </ul>
+ )}
+ </section>
+
       </div>
     </main>
   )
