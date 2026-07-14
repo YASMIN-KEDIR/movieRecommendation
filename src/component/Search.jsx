@@ -9,7 +9,10 @@ const Search = ({ searchTerm, setSearchTerm }) => {
        type="text" 
        placeholder="Search through thousands of movies..."
        value={searchTerm}
-       onChange={(e) => setSearchTerm(e.target.value)}
+      onChange={(e) => {
+  console.log("Typing:", e.target.value);
+  setSearchTerm(e.target.value);
+}}
       />
 
     </div>
@@ -17,4 +20,4 @@ const Search = ({ searchTerm, setSearchTerm }) => {
   )
 }
 
-export default Search
+export default Search;

@@ -40,3 +40,29 @@
 .read-the-docs {
   color: #888;
 }
+
+.trending-list {
+  display: flex;
+  gap: 20px;
+  list-style: none;
+}
+
+.trending-list {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  list-style: none;
+  padding: 10px;
+}
+
+.trending-list li {
+  flex: 0 0 auto;
+}
+
+.trending-list img {
+  width: 150px;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 10px;
+}

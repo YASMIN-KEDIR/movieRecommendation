@@ -2,6 +2,7 @@ import { useEffect, useState} from 'react'
 import Search from './component/Search'
 import Spinner from './component/Spinner'
 import MOvieCard from './component/MovieCard'
+import MovieModal from './component/MovieModal.jsx'
 import { getTrendingMovies, updateSearchCount } from "./appwrite.js";
 import { useDebounce } from "react-use";
 import "./App.css";
@@ -26,6 +27,9 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [debouncedSearchTerm,setDebouncedSearchTerm] = useState ('') 
   const [trendingMovies, setTrendingMovies] = useState([]);
+  const [selectedMovie, setSelectedMovie] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
 
  useDebounce(() => setDebouncedSearchTerm(searchTerm), 500, [searchTerm]);
 
@@ -44,10 +48,10 @@ const response = await fetch(endPoint, API_OPTIONS);
 
     const data = await response.json();
     
-if(data.Response === 'False'){
- setErrorMessage(data.Error || 'Failed to fetch movies');
- setMovieList([]);
- return;
+if (!data.results || data.results.length === 0) {
+  setErrorMessage("No movies found");
+  setMovieList([]);
+  return;
 }
 setMovieList(data.results || []);
 
@@ -83,11 +87,11 @@ setMovieList(data.results || []);
     document.body.style.overflow = "hidden";
   };
 
-  /*const closeModal = () => {
+  const closeModal = () => {
     setIsModalOpen(false);
     setSelectedMovie(null);
     document.body.style.overflow = "auto";
-  };*/
+  };
 
 useEffect(() => {
   fetchMovies (debouncedSearchTerm);
@@ -105,7 +109,7 @@ useEffect(() => {
       <div className="pattern"/>
       <div className="wrapper"> 
  <header>
-    <img src="./" className="logo" alt="Logo" />
+    <img src="./logo.png" className="logo" alt="Logo" />
   <img src="./hero.png" alt="Hero-banner" />
   <h1  className=" text-4xl font-bold text-white">Find <span className="text-gradient"> movies</span> you'll Enjoy Without The Hassel</h1>
    <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
@@ -113,7 +117,7 @@ useEffect(() => {
      {trendingMovies.length > 0 && (
           <section className="trending">
             <h2 className=" text-white">Trendings</h2>
-            <ul>
+            <ul  className="trending-list">
               {trendingMovies.map((movie, index) => (
                 <li key={movie.$id}>
                   <p>{index + 1}</p>
@@ -131,7 +135,7 @@ useEffect(() => {
 
 
  <section className="all-movies">
- <h2>All Movies</h2>
+ <h2 className="text-2xl mt-20 font-semibold text-white mb-4">All Movies</h2>
   
   {isLoading ? (
   <Spinner/>
@@ -147,6 +151,12 @@ useEffect(() => {
  </section>
 
       </div>
+
+ {isModalOpen && (
+        <MovieModal movie={selectedMovie} onClose={closeModal} />
+      )}
+
+      
     </main>
   )
 }
